@@ -3,6 +3,7 @@ package routeHandler
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/XinyaoTian/postgresManager/config"
 	"github.com/XinyaoTian/postgresManager/dbOperation"
 	"github.com/julienschmidt/httprouter"
 	"log"
@@ -53,7 +54,15 @@ func Manual(w http.ResponseWriter, r *http.Request, _ httprouter.Params)  {
 }
 
 func GetAllPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	dbOp, errOpen := dbOperation.Init("postgres","dbuser","docker","174.137.53.55","5432","testdb", "disable")
+	// 加载 postgresManager/config 中的数据库配置项
+	var dbConfig = config.Configinfo
+	dbOp, errOpen := dbOperation.Init(
+		dbConfig.GetDbProtocol(), dbConfig.GetUsername(),
+		dbConfig.GetDbPassword(), dbConfig.GetDbIp(),
+		dbConfig.GetDbPort(), dbConfig.GetDbName(),
+		dbConfig.GetSslMode(),
+		)
+	// 执行 postgresManager/dbOperation 中的数据库操作
 	comments, errQuery := dbOp.QueryAllFromPost()
 	b, errMar := json.Marshal(comments)
 	// 若所有步骤都没有报错
@@ -70,8 +79,17 @@ func GetAllPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func GetPostsByUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params)  {
+	// 载入由 heeprouter 从 url 中获取到的参数信息
 	username := ps.ByName("username")
-	dbOp, errOpen := dbOperation.Init("postgres","dbuser","docker","174.137.53.55","5432","testdb", "disable")
+	// 加载 postgresManager/config 中的数据库配置项
+	var dbConfig = config.Configinfo
+	dbOp, errOpen := dbOperation.Init(
+		dbConfig.GetDbProtocol(), dbConfig.GetUsername(),
+		dbConfig.GetDbPassword(), dbConfig.GetDbIp(),
+		dbConfig.GetDbPort(), dbConfig.GetDbName(),
+		dbConfig.GetSslMode(),
+	)
+	// 执行 postgresManager/dbOperation 中的数据库操作
 	comments, errQuery := dbOp.QueryFromPostByUsername(username)
 	b, errMar := json.Marshal(comments)
 	// 若所有步骤都没有报错
@@ -96,7 +114,15 @@ func InsertNewPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	post := r.FormValue("post")
 	postTime := r.FormValue("postTime")
 
-	dbOp, errOpen := dbOperation.Init("postgres","dbuser","docker","174.137.53.55","5432","testdb", "disable")
+	// 加载 postgresManager/config 中的数据库配置项
+	var dbConfig = config.Configinfo
+	dbOp, errOpen := dbOperation.Init(
+		dbConfig.GetDbProtocol(), dbConfig.GetUsername(),
+		dbConfig.GetDbPassword(), dbConfig.GetDbIp(),
+		dbConfig.GetDbPort(), dbConfig.GetDbName(),
+		dbConfig.GetSslMode(),
+	)
+	// 执行 postgresManager/dbOperation 中的数据库操作
 	errInsert := dbOp.InsertIntoPost(username,post,postTime, recordId)
 	if _checkErr(errInsert) && _checkErr(errOpen) == true {
 		fmt.Fprintf(w, `["Info":"Insert Success.","Error":"false"]` )
