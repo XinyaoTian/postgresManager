@@ -3,7 +3,7 @@
 
 ## 用法
 
-1. 更改 postgresManager/routeHandler 中的 3 个 Init 函数的数据库信息，以符合您的数据库
+1. 更改 postgresManager/config 中的配置信息，以符合您的数据库接入要求
     
 2. 编译并运行 main.go ；此 API 服务默认启动在 9090 端口
 
