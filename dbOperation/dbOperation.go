@@ -51,6 +51,9 @@ func (dbOp *dbOperator) InsertIntoPost(username, post, createtime, recordId stri
 
 	// 连接数据库
 	db, errOpen := sql.Open("postgres", dbOp.connStr)
+	// 函数执行完毕后记得关闭 db 链接，否则会导致服务器内存溢出
+	defer db.Close()
+
 	// 准备及执行相关数据库操作
 	stmt, errStmt := db.Prepare(insertSQL)
 	_, errRes := stmt.Exec(username, post, createtime, recordId)
@@ -73,6 +76,8 @@ func (dbOp *dbOperator) QueryAllFromPost() ([]*comment.Comment, error) {
 
 	// 连接数据库
 	db, errOpen := sql.Open("postgres", dbOp.connStr)
+	// 函数执行完毕后记得关闭 db 链接，否则会导致服务器内存溢出
+	defer db.Close()
 	// 查询
 	rows, errQuery := db.Query(QueryStr)
 	// 纠错
@@ -107,6 +112,8 @@ func (dbOp *dbOperator) QueryFromPostByUsername(username string) ([]*comment.Com
 
 	// 连接数据库
 	db, errOpen := sql.Open("postgres", dbOp.connStr)
+	// 函数执行完毕后记得关闭 db 链接，否则会导致服务器内存溢出
+	defer db.Close()
 	// 查询
 	rows, errQuery := db.Query(QueryStr,username)
 	// 纠错
