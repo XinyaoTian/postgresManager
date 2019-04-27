@@ -60,6 +60,17 @@
         /insert-post/:recordId
         # curl 命令示例: $ curl -X POST -d 'username=SAM&post=Hello&postTime=2012-02-05' http://127.0.0.1:9090/insert-post/00ac
 
+## 基于 Docker 的使用方法
+1. 进入 postgresManager 目录，可以看到其中包含了一个 Dockerfile 文件
+
+2. 使用如下命令将项目代码封装为 Docker 容器
+
+	docker build -t psqlmanager .
+
+3. 待容器封装好后，使用如下 docker 命令启动容器
+
+	docker run -it -d --rm -p 9090:9090 psqlmanager
+
 ## To Be Continue...
 
 
